@@ -57,7 +57,3 @@ A demonstration or presentation is prepared to showcase our compiler phases. We 
 ## Warning
 
 Please ensure originality in all submissions. Any direct copying from references without appropriate citations will result in a grade of F. Always list all references at the end of your submissions.
-
----
-
-You can use this structure and content as your README.md in your GitHub repository. Adjust the instructions to run, depending on your project's specifics. Remember, a good README is clear, concise, and helps any potential user or reviewer understand the project and how to interact with it.
