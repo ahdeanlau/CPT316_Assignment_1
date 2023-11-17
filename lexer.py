@@ -50,9 +50,20 @@ class ASTNode:
             return f"({self.value} = {self.right})"
         else:
             return f"({self.type}: {self.value})"
+    
+    def display_tree(self, level=0):
+        indentation = '  ' * level
+        if self.type == 'BINARY_OP':
+            print(f'{indentation}OP: {self.value}')
+            self.left.display_tree(level + 1)
+            self.right.display_tree(level + 1)
+        elif self.type == 'ASSIGNMENT':
+            print(f'{indentation}ASSIGNMENT: {self.value} =')
+            self.right.display_tree(level + 1)
+        else:
+            print(f'{indentation}{self.type}: {self.value}')
 
 
-# Updated Parser class
 class Parser:
     def __init__(self, tokens):  # Takes a list of tokens
         self.tokens = tokens  # Store the tokens
@@ -136,6 +147,7 @@ def check_syntax(code):
         parser = Parser(tokens)
         parsed_tree = parser.parse()
         print(parsed_tree)
+        parsed_tree.display_tree()
         return "Syntax is acceptable."
     except RuntimeError as e:
         return f"Syntax error: {e}"
