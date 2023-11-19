@@ -62,7 +62,27 @@ class ASTNode:
             self.right.display_tree(level + 1)
         else:
             print(f'{indentation}{self.type}: {self.value}')
-
+    
+    def to_dot(self, parent_id, dot_str):
+        if self.type == 'BINARY_OP':
+            node_id = f'node{len(dot_str)}'
+            dot_str.append(f'{node_id} [label="BINARY_OP: {self.value}"];\n')
+            dot_str.append(f'{parent_id} -> {node_id};\n')
+            self.left.to_dot(node_id, dot_str)
+            self.right.to_dot(node_id, dot_str)
+        elif self.type == 'ASSIGNMENT':
+            node_id = f'node{len(dot_str)}'
+            dot_str.append(f'{node_id} [label="ASSIGNMENT: ="];\n')  # Updated label
+            
+            left_node_id = f'node{len(dot_str)}'
+            dot_str.append(f'{left_node_id} [label="IDENTIFIER: {self.value}"];\n')
+            dot_str.append(f'{node_id} -> {left_node_id};\n')
+            
+            self.right.to_dot(node_id, dot_str)
+        else:
+            node_id = f'node{len(dot_str)}'
+            dot_str.append(f'{node_id} [label="{self.type}: {self.value}"];\n')
+            dot_str.append(f'{parent_id} -> {node_id};\n')
 
 class Parser:
     def __init__(self, tokens):  # Takes a list of tokens
@@ -148,7 +168,15 @@ def check_syntax(code):
         parsed_tree = parser.parse()
         print(parsed_tree)
         parsed_tree.display_tree()
-        return "Syntax is acceptable."
+
+        dot_str = ['digraph SyntaxTree {\n']
+        parsed_tree.to_dot('root', dot_str)
+        dot_str.append('}\n')
+
+        with open('syntax_tree.dot', 'w') as dot_file:
+            dot_file.writelines(dot_str)
+
+        return "Syntax is acceptable. Dot file is created."
     except RuntimeError as e:
         return f"Syntax error: {e}"
 

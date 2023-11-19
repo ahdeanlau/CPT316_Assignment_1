@@ -1,10 +1,14 @@
-**README.md**
-
----
-
 # Compiler Phases Implementation: Lexical and Syntax Analysis
 
-Welcome to our group's repository for the CPT316 assignment on implementing the lexical and syntax analysis phases of a compiler. 
+Welcome to Group 6 repository for the CPT316 assignment on implementing the lexical and syntax analysis phases of a compiler. 
+
+## Instructions to Run
+
+1. **Clone the repository**: `git clone https://github.com/ahdeanlau/CPT316_Assignment_1`.
+2. **Navigate to the source directory**: `cd CPT316_Assignment_1`.
+3. **Compile the code**: 
+4. **Run the program**: (Provide specific run instructions here, e.g., `./compiler sample_input.sl`).
+5. **Provide input or use existing sample codes**: Follow on-screen instructions.
 
 ## Objective
 
@@ -40,20 +44,3 @@ Our team will ensure thorough documentation of the implementation. We aim to pro
 
 A demonstration or presentation is prepared to showcase our compiler phases. We will explain our design choices and the specific language implemented for this purpose.
 
-## Submission Contents
-
-- Soft copy: Both in PDF and MS-Word format of the report.
-- Source code of our compiler phases.
-- This README file (with instructions to run the program code).
-
-## Instructions to Run
-
-1. **Clone the repository**: `git clone <repository-url>`.
-2. **Navigate to the source directory**: `cd source_directory`.
-3. **Compile the code**: (Provide specific compile instructions here, e.g., `gcc -o compiler main.c`).
-4. **Run the program**: (Provide specific run instructions here, e.g., `./compiler sample_input.sl`).
-5. **Provide input or use existing sample codes**: Follow on-screen instructions.
-
-## Warning
-
-Please ensure originality in all submissions. Any direct copying from references without appropriate citations will result in a grade of F. Always list all references at the end of your submissions.
