@@ -19,14 +19,21 @@ tok_regex = "|".join("(?P<%s>%s)" % pair for pair in token_specification)
 # The lexer function
 def lexer(code):
     tokens = []
+
+    # For each match, create a token
     for mo in re.finditer(tok_regex, code):
+        # Get the token type and value
         kind = mo.lastgroup
         value = mo.group()
+        
+        # Skip over spaces and tabs
         if kind == "SKIP":
             continue
+        # Raise an error if the token is illegal
         elif kind == "MISMATCH":
             raise RuntimeError(f"Illegal character {value!r}")
         else:
+            # Create a token and add it to the list
             if kind == "INTEGER":
                 value = int(value)  # Convert string to integer
             tokens.append((kind, value))
@@ -35,14 +42,16 @@ def lexer(code):
 
 # -----------------------------------------------------------------------------------------
 
-
+# Define the AST node class
 class ASTNode:
+    # The constructor, with a default value of None for the left and right children
     def __init__(self, type, value=None, left=None, right=None):
         self.type = type
         self.value = value
         self.left = left
         self.right = right
 
+    # The string representation of the node
     def __repr__(self):
         if self.type == "BINARY_OP":
             return f"({self.left} {self.value} {self.right})"
@@ -51,6 +60,7 @@ class ASTNode:
         else:
             return f"({self.type}: {self.value})"
     
+    # Display the tree in a human-readable format with indentation
     def display_tree(self, level=0):
         indentation = '  ' * level
         if self.type == 'BINARY_OP':
@@ -63,6 +73,7 @@ class ASTNode:
         else:
             print(f'{indentation}{self.type}: {self.value}')
     
+    # Output the GraphViz dot file of the tree
     def to_dot(self, parent_id, dot_str):
         if self.type == 'BINARY_OP':
             node_id = f'node{len(dot_str)}'
@@ -84,18 +95,21 @@ class ASTNode:
             dot_str.append(f'{node_id} [label="{self.type}: {self.value}"];\n')
             dot_str.append(f'{parent_id} -> {node_id};\n')
 
+# Define the parser class
 class Parser:
     def __init__(self, tokens):  # Takes a list of tokens
         self.tokens = tokens  # Store the tokens
         self.position = 0
 
-    def lookahead(self):  # Returns the next token without consuming it
+    # Returns the next token without consuming it
+    def lookahead(self):
         if self.position < len(self.tokens):  # Check that we haven't reached the end
             return self.tokens[self.position]  # Return the next token
         else:
             return None
 
-    def consume(self, expected_type):  # Consumes the next token and checks its type
+    # Consumes the next token and checks its type
+    def consume(self, expected_type):
         if (
             self.lookahead() and self.lookahead()[0] == expected_type
         ):  # Check that we haven't reached the end and that the next token is the expected type
@@ -106,7 +120,9 @@ class Parser:
                 f"Expected token type {expected_type}, got {self.lookahead()} at {self.position}"
             )
 
-    def factor(self):  # Parses a factor
+    # Parses a factor
+    # factor = integer | identifier | "(" expression ")"
+    def factor(self):
         token = self.lookahead()
         if token[0] == "INTEGER":
             self.consume("INTEGER")
@@ -122,6 +138,8 @@ class Parser:
         else:
             raise RuntimeError("Expected integer, identifier, or parenthesis")
 
+    # Parses a term
+    # term = factor { ("*" | "/") factor }
     def term(self):
         node = self.factor()
         while (
@@ -134,6 +152,8 @@ class Parser:
             node = ASTNode("BINARY_OP", op, left=node, right=right)
         return node
 
+    # Parses an expression
+    # expression = term { ("+" | "-") term }
     def expression(self):
         node = self.term()
         while (
@@ -146,15 +166,19 @@ class Parser:
             node = ASTNode("BINARY_OP", op, left=node, right=right)
         return node
 
+    # Parses an assignment
+    # assignment = identifier "=" expression
     def assignment(self):
         identifier = self.consume("IDENTIFIER")
         self.consume("OPERATOR")  # We assume that the operator is '='
         expr = self.expression()
         return ASTNode("ASSIGNMENT", value=identifier[1], left=None, right=expr)
 
+    # Parses the program
+    # program = assignment ";"
     def parse(self):
         node = self.assignment()
-        # Add support for semicolon at the end
+        # Must be semicolon at the end
         if self.lookahead() and self.lookahead()[0] == "SEMICOLON":
             self.consume("SEMICOLON")
         return node
@@ -163,12 +187,16 @@ class Parser:
 # Function to check the syntax
 def check_syntax(code):
     try:
+        # Run the lexer and parser
         tokens = lexer(code)
         parser = Parser(tokens)
         parsed_tree = parser.parse()
+
+        # Display the tree
         print(parsed_tree)
         parsed_tree.display_tree()
 
+        # Output the GraphViz dot file
         dot_str = ['digraph SyntaxTree {\n']
         parsed_tree.to_dot('root', dot_str)
         dot_str.append('}\n')
@@ -183,7 +211,7 @@ def check_syntax(code):
 
 # Prompt for user input
 code_input = input("Enter your code: ")
-print(check_syntax(code_input))
+# print(check_syntax(code_input))
 
 # Sample input
-# print(check_syntax("x = 2 * 3 + ((4 - 1) * 6) - (x - 5) = x;"))
+print(check_syntax("x = 2 * 3 + ((4 - 1) * 6) - (x - 5) = x;"))
