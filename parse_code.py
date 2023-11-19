@@ -182,5 +182,8 @@ def check_syntax(code):
 
 
 # Prompt for user input
-# code_input = input("Enter your code: ")
-print(check_syntax("x = 2 * 3 + ((4 - 1) * 6) - (x - 5) = x;"))
+code_input = input("Enter your code: ")
+print(check_syntax(code_input))
+
+# Sample input
+# print(check_syntax("x = 2 * 3 + ((4 - 1) * 6) - (x - 5) = x;"))
